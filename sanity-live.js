@@ -87,7 +87,6 @@
     }
 
     // VISIT
-    const visitLabel = document.querySelector('.visit-label');
     const visitTitle = document.querySelector('.visit-title');
     const visitText  = document.querySelector('.visit-text');
     const visitBtn   = document.querySelector('.visit-btn');
@@ -144,7 +143,7 @@
         const label = d ? `${d.getDate()} ${MOIS_FR[d.getMonth()].toLowerCase().replace('.', '')}` : '';
         const imgSrc = ev.image?.asset?._ref
           ? imgUrl(ev.image.asset._ref, 400)
-          : 'https://placehold.co/400x300';
+          : './brand_assets/monchat_brasserie.jpg';
         const lien  = ev.lien || '#visiter';
 
         return `
