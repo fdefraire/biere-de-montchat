@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bière de Montchat — Brasserie Artisanale à Lyon</title>
+  <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Dancing+Script:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --green: #5DB93C;
+      --green-dark: #3d8a27;
+      --green-light: #a3e082;
+      --black: #111110;
+      --cream: #F8F2E6;
+      --cream-dark: #EDE5D4;
+      --amber: #C8860A;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--cream);
+      color: var(--black);
+      line-height: 1.7;
+    }
+
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; line-height: 1.15; }
+
+    .script { font-family: 'Dancing Script', cursive; }
+
+    /* Grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  padding 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    nav.scrolled {
+      background: var(--black);
+      padding: 0.75rem 2.5rem;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.35);
+    }
+
+    .nav-logo { height: 52px; }
+    nav.scrolled .nav-logo { height: 40px; }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      transition: opacity 0.2s ease, color 0.2s ease;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--green-light); }
+    .nav-links a:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--green);
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.65rem 1.5rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 4px 16px rgba(93,185,60,0.3), 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(93,185,60,0.4); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+
+    /* Hero */
+    .hero {
+      height: 100vh;
+      min-height: 700px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .hero-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(10,10,8,0.9) 0%, rgba(10,10,8,0.5) 45%, rgba(10,10,8,0.15) 100%),
+        radial-gradient(ellipse at 30% 60%, rgba(93,185,60,0.12) 0%, transparent 60%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 4rem 5rem;
+      max-width: 800px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green-light);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: var(--green);
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      color: white;
+      margin-bottom: 1.25rem;
+      font-weight: 900;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--green-light);
+    }
+
+    .hero-sub {
+      color: rgba(255,255,255,0.7);
+      font-size: 1.1rem;
+      max-width: 480px;
+      margin-bottom: 2.25rem;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+
+    .btn-ghost {
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .btn-ghost:hover { border-color: var(--green); color: var(--green-light); }
+    .btn-ghost:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+    /* Divider */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green-dark);
+      margin-bottom: 1rem;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: var(--green);
+      border-radius: 1px;
+    }
+
+    /* Beer cards */
+    .beer-card {
+      background: white;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow:
+        0 2px 8px rgba(17,17,16,0.06),
+        0 8px 24px rgba(17,17,16,0.08);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.3s ease;
+    }
+    .beer-card:hover {
+      transform: translateY(-6px);
+      box-shadow:
+        0 4px 12px rgba(17,17,16,0.08),
+        0 16px 40px rgba(17,17,16,0.14);
+    }
+
+    .beer-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 2px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* Image gallery */
+    .gallery-img {
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      width: 100%;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .gallery-item { overflow: hidden; }
+    .gallery-item:hover .gallery-img { transform: scale(1.04); }
+
+    /* Ingredient strip */
+    .ingredient-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Team */
+    .team-photo {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    /* Visit section */
+    .info-row {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green-dark);
+      min-width: 120px;
+      padding-top: 0.15rem;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--black);
+      color: rgba(255,255,255,0.55);
+    }
+    footer a {
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    footer a:hover { color: var(--green-light); }
+    footer a:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+    /* Scroll animation */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* Decorative paw */
+    .paw-deco {
+      opacity: 0.04;
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    @media (max-width: 768px) {
+      .hero-content { padding: 2.5rem 1.5rem; }
+      nav { padding: 1rem 1.25rem; }
+      nav.scrolled { padding: 0.6rem 1.25rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════ NAV ══════════════════════════════════ -->
+  <nav id="navbar">
+    <a href="#accueil" aria-label="Accueil">
+      <img src="./brand_assets/logo.png" alt="Bière de Montchat" class="nav-logo" style="filter: brightness(0) invert(1);" />
+    </a>
+    <div class="nav-links" style="display:flex; gap:2.5rem; align-items:center;">
+      <a href="#bieres">Nos Bières</a>
+      <a href="#brasserie">La Brasserie</a>
+      <a href="#equipe">L'Équipe</a>
+      <a href="#visiter">Visiter</a>
+    </div>
+    <a href="#visiter" class="btn-primary">Nous Rendre Visite</a>
+  </nav>
+
+  <!-- ═══════════════════════════════════ HERO ══════════════════════════════════ -->
+  <section id="accueil" class="hero">
+    <img
+      src="./brand_assets/IMG_2543-copie-2-1-1024x683.jpg"
+      alt="La brasserie Montchat"
+      class="hero-img"
+    />
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Brasserie Artisanale · Lyon</div>
+      <h1>Brassée ici.<br /><em>Bue ici.</em></h1>
+      <p class="hero-sub">
+        Des bières artisanales authentiques, fabriquées avec passion au cœur de Montchat,
+        à partir de malt local et de houblon soigneusement sélectionné.
+      </p>
+      <div class="hero-actions">
+        <a href="#bieres" class="btn-primary">Découvrir nos bières</a>
+        <a href="#brasserie" class="btn-ghost">Notre histoire</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ INTRO STRIP ══════════════════════════ -->
+  <div style="background: var(--black); padding: 1.5rem 0; overflow: hidden;">
+    <div style="display:flex; gap:4rem; justify-content:center; flex-wrap:wrap; align-items:center;">
+      <div style="color:rgba(255,255,255,0.5); font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; display:flex; align-items:center; gap:0.75rem;">
+        <span style="color: var(--green); font-size:1.2rem;">✦</span> Brasserie indépendante
+      </div>
+      <div style="color:rgba(255,255,255,0.5); font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; display:flex; align-items:center; gap:0.75rem;">
+        <span style="color: var(--green); font-size:1.2rem;">✦</span> Malt local & biologique
+      </div>
+      <div style="color:rgba(255,255,255,0.5); font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; display:flex; align-items:center; gap:0.75rem;">
+        <span style="color: var(--green); font-size:1.2rem;">✦</span> Recettes maison
+      </div>
+      <div style="color:rgba(255,255,255,0.5); font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; display:flex; align-items:center; gap:0.75rem;">
+        <span style="color: var(--green); font-size:1.2rem;">✦</span> En vente sur place
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ NOS BIÈRES ══════════════════════════ -->
+  <section id="bieres" style="padding: 7rem 5rem; max-width: 1400px; margin: 0 auto;">
+    <div class="fade-up">
+      <div class="section-label">La Gamme</div>
+      <h2 style="font-size: clamp(2rem, 4vw, 3.25rem); margin-bottom: 0.5rem;">
+        Nos Bières
+      </h2>
+      <p class="script" style="font-size:1.6rem; color: var(--green-dark); margin-bottom: 3.5rem;">
+        Six caractères, un terroir.
+      </p>
+    </div>
+
+    <!-- Big bottles photo -->
+    <div class="fade-up" style="border-radius: 6px; overflow: hidden; margin-bottom: 4rem; position: relative; box-shadow: 0 8px 40px rgba(17,17,16,0.15);">
+      <img
+        src="./brand_assets/IMG_2602-1024x683.jpeg"
+        alt="Gamme Bière de Montchat"
+        style="width:100%; max-height:520px; object-fit:cover; object-position: center 30%; display:block;"
+      />
+      <div style="position:absolute; inset:0; background: linear-gradient(to right, rgba(10,10,8,0.55) 0%, transparent 50%); pointer-events:none;"></div>
+      <div style="position:absolute; top:50%; left:3rem; transform:translateY(-50%);">
+        <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">La collection</div>
+        <div style="font-family:'Playfair Display',serif; font-size:clamp(1.5rem,3vw,2.5rem); color:white; font-weight:900; line-height:1.1;">Six bières,<br />six caractères.</div>
+      </div>
+    </div>
+
+    <!-- Beer Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
+
+      <div class="beer-card fade-up">
+        <div style="height:6px; background: linear-gradient(to right, #C0392B, #E74C3C);"></div>
+        <div style="padding: 1.75rem;">
+          <div class="beer-badge" style="background:#FDF0EF; color:#C0392B; margin-bottom:1rem;">Lager de Style Autrichien</div>
+          <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Vienna</h3>
+          <p style="font-size:0.9rem; color:#555; line-height:1.7; margin-bottom:1.25rem;">
+            Une lager ambrée au caractère maltée prononcé. Notes de pain grillé,
+            caramel doux et une amertume équilibrée en finale.
+          </p>
+          <div style="display:flex; gap:1rem; font-size:0.75rem; color:#888; font-weight:500;">
+            <span>Ambrée</span>
+            <span>·</span>
+            <span>Maltée</span>
+            <span>·</span>
+            <span>Équilibrée</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="beer-card fade-up">
+        <div style="height:6px; background: linear-gradient(to right, #27AE60, #2ECC71);"></div>
+        <div style="padding: 1.75rem;">
+          <div class="beer-badge" style="background:#EBF9F1; color:#1E8449; margin-bottom:1rem;">Ale Houblonnée</div>
+          <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">India Pale Ale</h3>
+          <p style="font-size:0.9rem; color:#555; line-height:1.7; margin-bottom:1.25rem;">
+            Une IPA généreuse aux arômes floraux et fruités. Amertume franche,
+            notes d'agrumes et de résine pour les amateurs de houblon.
+          </p>
+          <div style="display:flex; gap:1rem; font-size:0.75rem; color:#888; font-weight:500;">
+            <span>Blonde</span>
+            <span>·</span>
+            <span>Houblonnée</span>
+            <span>·</span>
+            <span>Aromatique</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="beer-card fade-up">
+        <div style="height:6px; background: linear-gradient(to right, #F39C12, #F1C40F);"></div>
+        <div style="padding: 1.75rem;">
+          <div class="beer-badge" style="background:#FFFBEB; color:#D68910; margin-bottom:1rem;">Lager Blonde</div>
+          <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Pilsner</h3>
+          <p style="font-size:0.9rem; color:#555; line-height:1.7; margin-bottom:1.25rem;">
+            La référence de la brasserie. Légère, désaltérante, avec une mousse
+            fine et persistante. Parfaite pour toutes les occasions.
+          </p>
+          <div style="display:flex; gap:1rem; font-size:0.75rem; color:#888; font-weight:500;">
+            <span>Blonde</span>
+            <span>·</span>
+            <span>Légère</span>
+            <span>·</span>
+            <span>Désaltérante</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="beer-card fade-up">
+        <div style="height:6px; background: linear-gradient(to right, #2980B9, #3498DB);"></div>
+        <div style="padding: 1.75rem;">
+          <div class="beer-badge" style="background:#EBF5FB; color:#1A6FA3; margin-bottom:1rem;">Ale Dorée</div>
+          <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Golden Ale Blonde</h3>
+          <p style="font-size:0.9rem; color:#555; line-height:1.7; margin-bottom:1.25rem;">
+            Robe dorée, bulles fines. Un nez fruité sur des notes de miel et de
+            fleurs blanches. Douce et accessible, idéale pour débuter.
+          </p>
+          <div style="display:flex; gap:1rem; font-size:0.75rem; color:#888; font-weight:500;">
+            <span>Dorée</span>
+            <span>·</span>
+            <span>Fruitée</span>
+            <span>·</span>
+            <span>Douce</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ LA BRASSERIE ════════════════════════ -->
+  <section id="brasserie" style="background: var(--black); position: relative; overflow: hidden;">
+    <div style="position:absolute; top:-10%; right:-5%; width:600px; height:600px; border-radius:50%; background: radial-gradient(circle, rgba(93,185,60,0.07) 0%, transparent 70%); pointer-events:none;"></div>
+
+    <div style="max-width:1400px; margin:0 auto; padding: 7rem 5rem; display:grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items:center;">
+      <div class="fade-up">
+        <div class="section-label" style="color: var(--green);">Notre Histoire</div>
+        <h2 style="font-size: clamp(2rem, 3.5vw, 3rem); color: white; margin-bottom: 1.5rem;">
+          Née dans un garage,<br />
+          <span class="script" style="font-size:1.4em; color: var(--green-light);">grandie avec passion.</span>
+        </h2>
+        <p style="color: rgba(255,255,255,0.65); margin-bottom: 1.25rem; font-size:1rem;">
+          La Bière de Montchat est née de la passion de quelques amateurs de bonne bière,
+          décidés à brasser leurs propres recettes dans le quartier historique de Montchat, à Lyon.
+        </p>
+        <p style="color: rgba(255,255,255,0.65); margin-bottom: 1.25rem; font-size:1rem;">
+          Depuis nos débuts modestes, nous avons investi dans un véritable équipement de brasserie
+          tout en gardant notre philosophie artisanale : de petits volumes, une attention
+          extrême aux détails, et des ingrédients de qualité.
+        </p>
+        <p style="color: rgba(255,255,255,0.65); margin-bottom: 2.5rem; font-size:1rem;">
+          Nous travaillons avec du malt certifié local et biologique, sélectionné auprès de
+          producteurs engagés, pour un brassage responsable et savoureux.
+        </p>
+        <a href="#visiter" class="btn-primary">Venir nous voir</a>
+      </div>
+
+      <!-- Photo grid -->
+      <div class="fade-up" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows: auto auto; gap: 1rem;">
+        <div class="gallery-item" style="border-radius:4px; overflow:hidden; grid-row: 1 / 3;">
+          <img src="./brand_assets/IMG_2623-1024x683.jpeg" alt="Cuves de fermentation" class="gallery-img" style="height:100%; aspect-ratio: unset;" />
+        </div>
+        <div class="gallery-item" style="border-radius:4px; overflow:hidden;">
+          <img src="./brand_assets/IMG_2493-1024x683.jpeg" alt="Équipement brasserie" class="gallery-img" />
+        </div>
+        <div class="gallery-item" style="border-radius:4px; overflow:hidden;">
+          <img src="./brand_assets/IMG_2628-1024x683.jpeg" alt="Cuves de maturation" class="gallery-img" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ INGRÉDIENTS ════════════════════════ -->
+  <section style="padding: 7rem 5rem; max-width: 1400px; margin: 0 auto;">
+    <div class="fade-up" style="text-align:center; margin-bottom: 4rem;">
+      <div class="section-label" style="justify-content:center;">Les Ingrédients</div>
+      <h2 style="font-size: clamp(2rem, 3.5vw, 3rem); margin-bottom: 0.75rem;">Du champ à la bouteille</h2>
+      <p style="color: #666; max-width: 520px; margin: 0 auto; font-size:1rem;">
+        Nous sélectionnons chaque ingrédient avec soin. Notre malt local issu de
+        l'agriculture biologique est la colonne vertébrale de chaque recette.
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: stretch;">
+      <div class="gallery-item fade-up" style="border-radius:6px; overflow:hidden; position:relative; min-height:420px;">
+        <img src="./brand_assets/IMG_2616-1024x683.jpeg" alt="Stocks de malt" style="width:100%; height:100%; object-fit:cover; object-position:center; display:block; position:absolute; inset:0;" />
+        <div style="position:absolute; inset:0; background: linear-gradient(to top, rgba(10,10,8,0.75) 0%, transparent 55%);"></div>
+        <div style="position:absolute; bottom:2rem; left:2rem;">
+          <div style="color:rgba(255,255,255,0.6); font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.4rem;">Ingrédient #1</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1.75rem; color:white; font-weight:700;">Malt Local Bio</div>
+          <div style="color:rgba(255,255,255,0.65); font-size:0.875rem; margin-top:0.4rem;">Céréales tracées, agriculture responsable</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-rows: 1fr 1fr; gap:2rem;">
+        <div class="fade-up" style="background:white; border-radius:6px; padding:2.5rem; box-shadow: 0 4px 24px rgba(17,17,16,0.08); display:flex; flex-direction:column; justify-content:center;">
+          <div class="section-label">Houblon</div>
+          <h3 style="font-size:1.5rem; margin-bottom:0.75rem;">Des arômes soigneusement choisis</h3>
+          <p style="color:#666; font-size:0.9rem;">
+            Chaque recette utilise des variétés de houblon spécifiques pour créer
+            des profils aromatiques uniques — du floral au résine, du fruité à l'herbacé.
+          </p>
+        </div>
+
+        <div class="gallery-item fade-up" style="border-radius:6px; overflow:hidden; position:relative;">
+          <img src="./brand_assets/montchat_header.jpeg" alt="Sacs de malt" style="width:100%; height:100%; object-fit:cover; display:block;" />
+          <div style="position:absolute; inset:0; background: linear-gradient(to top, rgba(10,10,8,0.65) 0%, transparent 50%);"></div>
+          <div style="position:absolute; bottom:1.5rem; left:1.5rem; color:white; font-size:0.875rem; font-style:italic; opacity:0.85;">Réserves de malt — Brasserie Montchat</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ L'ÉQUIPE ════════════════════════════ -->
+  <section id="equipe" style="background: var(--cream-dark); padding: 7rem 5rem;">
+    <div style="max-width:1400px; margin:0 auto; display:grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items:center;">
+      <div class="fade-up" style="position:relative;">
+        <div style="border-radius:6px; overflow:hidden; box-shadow: 0 8px 40px rgba(17,17,16,0.15);">
+          <img src="./brand_assets/Photo-de-nous-1024x768.jpg" alt="L'équipe Bière de Montchat" class="team-photo" />
+        </div>
+        <!-- Floating accent card -->
+        <div style="position:absolute; bottom:-2rem; right:-2rem; background:var(--green); color:white; padding:1.5rem 2rem; border-radius:4px; box-shadow: 0 8px 32px rgba(93,185,60,0.35);">
+          <div style="font-family:'Dancing Script',cursive; font-size:1.75rem; line-height:1;">Fait avec</div>
+          <div style="font-family:'Dancing Script',cursive; font-size:1.75rem; line-height:1;">passion ♥</div>
+        </div>
+      </div>
+
+      <div class="fade-up">
+        <div class="section-label">L'Équipe</div>
+        <h2 style="font-size: clamp(2rem, 3.5vw, 3rem); margin-bottom: 1.5rem;">
+          Des passionnés<br />derrière chaque gorgée
+        </h2>
+        <p style="color:#555; margin-bottom:1.25rem; font-size:1rem;">
+          La Bière de Montchat est portée par une petite équipe de brasseurs passionnés
+          qui partagent une même conviction : une bonne bière demande du temps,
+          de l'attention et un sourire.
+        </p>
+        <p style="color:#555; margin-bottom:1.25rem; font-size:1rem;">
+          Chaque brassin est une nouvelle aventure. Nous expérimentons, nous apprenons,
+          et nous partageons le résultat avec notre communauté à Montchat et au-delà.
+        </p>
+        <p style="color:#555; margin-bottom:2.5rem; font-size:1rem;">
+          Venez nous rendre visite, goûter nos créations, et discuter bière avec ceux
+          qui la font — c'est ça, l'esprit Montchat.
+        </p>
+
+        <div style="display:flex; gap:2.5rem;">
+          <div>
+            <div style="font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; color:var(--green-dark);">6+</div>
+            <div style="font-size:0.8rem; color:#888; letter-spacing:0.05em;">Bières au catalogue</div>
+          </div>
+          <div style="width:1px; background:var(--cream-dark);"></div>
+          <div>
+            <div style="font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; color:var(--green-dark);">100%</div>
+            <div style="font-size:0.8rem; color:#888; letter-spacing:0.05em;">Artisanal & local</div>
+          </div>
+          <div style="width:1px; background:var(--cream-dark);"></div>
+          <div>
+            <div style="font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; color:var(--green-dark);">Lyon</div>
+            <div style="font-size:0.8rem; color:#888; letter-spacing:0.05em;">Fabriqué ici</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ BREWER PORTRAIT ═════════════════════ -->
+  <section style="padding: 5rem; max-width: 1400px; margin: 0 auto;">
+    <div style="display:grid; grid-template-columns: auto 1fr; gap:4rem; align-items:center;">
+      <div class="fade-up" style="flex-shrink:0;">
+        <div style="width:280px; border-radius:6px; overflow:hidden; box-shadow: 0 8px 40px rgba(17,17,16,0.12);">
+          <img src="./brand_assets/Sans-titre-958x1024.jpg" alt="Le brasseur" style="width:100%; display:block; object-fit:cover;" />
+        </div>
+      </div>
+      <div class="fade-up">
+        <div class="section-label">Le mot du brasseur</div>
+        <blockquote style="font-family:'Playfair Display',serif; font-size:clamp(1.3rem,2.5vw,2rem); font-style:italic; color:var(--black); line-height:1.5; margin:0 0 1.5rem 0; border-left: 3px solid var(--green); padding-left:1.75rem;">
+          "Brasser, c'est transformer des ingrédients simples en quelque chose
+          d'extraordinaire. Chaque bière qu'on crée raconte l'histoire de Montchat."
+        </blockquote>
+        <p style="color:#666; font-size:0.9rem;">— Le Brasseur, Bière de Montchat · Lyon</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ VISITER ══════════════════════════════ -->
+  <section id="visiter" style="background: var(--black); padding: 7rem 5rem;">
+    <div style="max-width:1400px; margin:0 auto; display:grid; grid-template-columns: 1fr 1fr; gap:6rem; align-items:start;">
+      <div class="fade-up">
+        <div class="section-label" style="color:var(--green);">Venir nous voir</div>
+        <h2 style="font-size: clamp(2rem, 3.5vw, 3rem); color:white; margin-bottom: 2rem;">
+          La brasserie vous<br />ouvre ses portes
+        </h2>
+        <p style="color:rgba(255,255,255,0.6); margin-bottom:2.5rem;">
+          Venez découvrir notre brasserie, goûter nos bières et repartir avec vos bouteilles préférées.
+          Nous accueillons les visites et les ventes directes sur place.
+        </p>
+
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:2rem; margin-bottom:2rem;">
+          <div class="info-row" style="border-color:rgba(255,255,255,0.08);">
+            <div class="info-label" style="color:var(--green);">Adresse</div>
+            <div style="color:rgba(255,255,255,0.75); font-size:0.95rem;">
+              Quartier de Montchat<br />Lyon, France
+            </div>
+          </div>
+          <div class="info-row" style="border-color:rgba(255,255,255,0.08);">
+            <div class="info-label" style="color:var(--green);">Horaires</div>
+            <div style="color:rgba(255,255,255,0.75); font-size:0.95rem;">
+              Vendredi : 17h – 20h<br />
+              Samedi : 10h – 13h<br />
+              Sur rendez-vous en semaine
+            </div>
+          </div>
+          <div class="info-row" style="border-color:rgba(255,255,255,0.08);">
+            <div class="info-label" style="color:var(--green);">Vente</div>
+            <div style="color:rgba(255,255,255,0.75); font-size:0.95rem;">
+              Bouteilles à emporter<br />
+              Fûts sur commande
+            </div>
+          </div>
+          <div class="info-row" style="border-color: transparent;">
+            <div class="info-label" style="color:var(--green);">Contact</div>
+            <div style="color:rgba(255,255,255,0.75); font-size:0.95rem;">
+              <a href="mailto:contact@bieremontchat.fr" style="color:var(--green-light); text-decoration:none; hover:underline;">contact@bieremontchat.fr</a>
+            </div>
+          </div>
+        </div>
+
+        <a href="mailto:contact@bieremontchat.fr" class="btn-primary">Nous Contacter</a>
+      </div>
+
+      <!-- Bar photo -->
+      <div class="fade-up">
+        <div style="border-radius:6px; overflow:hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.4); position:relative;">
+          <img src="./brand_assets/monchat_brasserie.jpg" alt="Le bar de la brasserie" style="width:100%; aspect-ratio:3/4; object-fit:cover; display:block; object-position: center;" />
+          <div style="position:absolute; inset:0; background: linear-gradient(to top, rgba(10,10,8,0.4) 0%, transparent 60%);"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════ -->
+  <footer style="padding: 3rem 5rem; border-top: 1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1400px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:2rem;">
+      <div style="display:flex; align-items:center; gap:1.25rem;">
+        <img src="./brand_assets/logo.png" alt="Bière de Montchat" style="height:48px; filter:brightness(0) invert(1); opacity:0.7;" />
+        <div style="font-size:0.8rem; line-height:1.5; opacity:0.5;">
+          Brasserie Artisanale<br />Lyon, Montchat
+        </div>
+      </div>
+      <div style="display:flex; gap:2rem; flex-wrap:wrap;">
+        <a href="#bieres">Nos Bières</a>
+        <a href="#brasserie">La Brasserie</a>
+        <a href="#equipe">L'Équipe</a>
+        <a href="#visiter">Visiter</a>
+      </div>
+      <div style="font-size:0.75rem; opacity:0.35;">
+        © 2024 Bière de Montchat — Tous droits réservés
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll behavior
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // Intersection observer for fade-up animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.04, rootMargin: '200px 0px 200px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach((el, i) => {
+      el.style.transitionDelay = `${(i % 4) * 0.08}s`;
+      observer.observe(el);
+    });
+
+    // Ensure all elements are visible after load (for screenshots / no-scroll scenarios)
+    setTimeout(() => {
+      document.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'));
+    }, 400);
+  </script>
+</body>
+</html>

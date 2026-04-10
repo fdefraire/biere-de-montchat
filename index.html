@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bière de Montchat — Brasserie Artisanale à Lyon</title>
+  <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,700;1,9..40,900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --green:       #5DB93C;
+      --green-dark:  #3a7d22;
+      --green-light: #a3e082;
+      --black:       #1a1b1f;
+      --charcoal:    #1d1d1d;
+      --white-smoke: #f4f4ef;
+      --white:       #ffffff;
+      --amber:       #C8860A;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--white-smoke);
+      color: var(--black);
+      font-size: 16px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ────────────────── NAV ────────────────── */
+    nav {
+      background: var(--black);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 36px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .nav-right { justify-content: flex-end; }
+
+    nav a {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--green-light); }
+    nav a:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+    .nav-logo {
+      height: 44px;
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
+    }
+
+    /* ────────────────── HERO ────────────────── */
+    .hero {
+      background: var(--black);
+      min-height: 42vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 36px 360px; /* extra bottom padding for card overlap */
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative asterisks */
+    .asterisk {
+      position: absolute;
+      font-size: 2rem;
+      color: var(--green);
+      font-weight: 900;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .asterisk-1 { top: 22%; left: 8%;  font-size: 1.5rem; }
+    .asterisk-2 { top: 15%; right: 9%; font-size: 2.5rem; }
+    .asterisk-3 { bottom: 25%; left: 6%;  font-size: 1rem; color: rgba(93,185,60,0.5); }
+    .asterisk-4 { bottom: 20%; right: 7%; font-size: 1.4rem; color: rgba(93,185,60,0.6); }
+
+    /* Dot accent */
+    .dot-accent {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--green);
+      pointer-events: none;
+    }
+    .dot-1 { width: 8px; height: 8px; top: 26%; left: 12%; }
+    .dot-2 { width: 5px; height: 5px; bottom: 28%; right: 12%; opacity: 0.6; }
+
+    .hero-tag {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 18px;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      max-width: 740px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 900;
+      color: var(--green);
+    }
+
+    /* ────────────────── BEER SLIDER ────────────────── */
+
+    /* Split background: dark (top, hero continuation) → cream (bottom) */
+    .slider-wrap {
+      position: relative;
+      z-index: 2;
+      margin-top: -240px;
+      overflow: hidden;
+      background: linear-gradient(to bottom, var(--black) 52%, var(--white-smoke) 52%);
+      padding-bottom: 48px;
+    }
+
+    /* Scrolling belt — JS controls transform, no CSS animation */
+    .slider-track {
+      display: flex;
+      gap: 10px;
+      width: max-content;
+      padding: 0 5px;
+      cursor: grab;
+      will-change: transform;
+      user-select: none;
+    }
+    .slider-track.dragging { cursor: grabbing; }
+
+    .beer-slide {
+      flex-shrink: 0;
+      width: 260px;
+      height: 430px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      /* smooth lift on hover (since marquee is paused) */
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .beer-slide:hover { transform: translateY(-10px) scale(1.03); }
+
+    .beer-slide img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.9;
+    }
+
+    .beer-slide-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 45%, transparent 70%);
+    }
+
+    /* Scattered confetti dots */
+    .beer-slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.3) 1.5px, transparent 1.5px),
+        radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px);
+      background-size: 32px 32px, 16px 16px;
+      background-position: 0 0, 8px 8px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Per-beer background colors */
+    .slide-blonde     { background: #C9A820; }
+    .slide-blanche    { background: #7298B0; }
+    .slide-triplebock { background: #1A3B7A; }
+    .slide-ambre      { background: #B03010; }
+    .slide-stout      { background: #1A2B48; }
+    .slide-tacotaco   { background: #1A1A0E; }
+    .slide-ddhipa     { background: #1E5C28; }
+
+    .slide-label-inner {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 3;
+      padding: 18px 16px 16px;
+    }
+
+    .slide-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.15;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .slide-arrow {
+      color: var(--green-light);
+      font-size: 18px;
+      line-height: 1;
+      transition: transform 0.2s;
+    }
+    .beer-slide:hover .slide-arrow { transform: translateX(5px); }
+
+    .slide-style {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 4px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .slider-beer-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .slider-beer-name svg { color: var(--green); flex-shrink: 0; }
+    .slider-beer-style {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    /* ────────────────── SPLIT: EVENTS + BANNER ────────────────── */
+
+    .split-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* Left panel — calendar */
+    .split-left {
+      border-right: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Right panel — banner, contains the graphic shapes */
+    .split-right {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 480px;
+    }
+
+    /* ────────────────── EVENTS CALENDAR ────────────────── */
+
+    .events-section {
+      /* no bg/border — handled by split-section */
+      flex: 1;
+    }
+
+    .events-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 36px 36px 8px;
+    }
+
+    .events-heading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+
+    .events-heading-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--green);
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .events-heading-icon svg { width: 14px; height: 14px; }
+
+    .events-see-all {
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .events-see-all:hover { color: var(--green-light); border-color: var(--green); }
+    .events-see-all:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+    /* ── Each event row ── */
+    .event-row {
+      --cp-content-gap: 1.25rem;
+      --cp-date-size: 3.75rem;
+      --cp-title-size: 1rem;
+      --cp-actions-font-size: 0.8rem;
+      --cp-image-hover-speed: 0.65s;
+
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: var(--cp-content-gap);
+      padding: 16px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      cursor: pointer;
+      overflow: hidden;
+      transition: background 0.25s;
+      text-decoration: none;
+    }
+    .event-row:hover { background: rgba(255,255,255,0.04); }
+    .event-row:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+
+    @media (min-width: 992px) {
+      .event-row {
+        --cp-content-gap: 1.75rem;
+        --cp-date-size: 4.25rem;
+        --cp-title-size: 1.15rem;
+        --cp-actions-font-size: 0.875rem;
+      }
+    }
+
+    /* Date badge — white box, green top border */
+    .event-date {
+      flex-shrink: 0;
+      width: var(--cp-date-size);
+      height: var(--cp-date-size);
+      background: white;
+      border-top: 4px solid var(--green);
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      position: relative;
+      z-index: 2;
+    }
+    .event-date-day {
+      font-size: calc(var(--cp-date-size) * 0.4);
+      font-weight: 900;
+      color: var(--black);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .event-date-month {
+      font-size: calc(var(--cp-date-size) * 0.17);
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Event content */
+    .event-content {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .event-name {
+      font-size: var(--cp-title-size);
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 4px;
+      transition: color 0.2s;
+    }
+    .event-row:hover .event-name { color: var(--green-light); }
+
+    .event-venue {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 400;
+    }
+
+    /* CTA right */
+    .event-cta {
+      flex-shrink: 0;
+      font-size: var(--cp-actions-font-size);
+      font-weight: 700;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+      padding-bottom: 2px;
+      position: relative;
+      z-index: 2;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .event-row:hover .event-cta { color: var(--green-light); border-color: var(--green); }
+
+    /* Hover image — floats in centered-right within the half-panel */
+    .event-img-preview {
+      position: absolute;
+      right: 110px;
+      top: 50%;
+      transform: translateY(-50%) scale(0.94);
+      width: 220px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.55);
+      transition:
+        opacity var(--cp-image-hover-speed) ease,
+        transform var(--cp-image-hover-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .event-row:hover .event-img-preview {
+      opacity: 1;
+      transform: translateY(-50%) scale(1.04);
+    }
+
+    /* ────────────────── QUOTE ────────────────── */
+    .quote-section {
+      background: var(--white-smoke);
+      padding: 80px 36px;
+      text-align: center;
+    }
+    .quote-text {
+      font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      color: var(--black);
+      max-width: 780px;
+      margin: 0 auto;
+      line-height: 1.4;
+    }
+    .quote-text .accent { color: var(--green); }
+    .quote-text .accent2 { color: var(--amber); }
+
+    /* ────────────────── GRAPHIC BANNER (inside split-right) ────────────────── */
+    .graphic-banner {
+      background: transparent; /* parent split-right handles bg */
+      position: absolute;      /* fill the entire right panel */
+      inset: 0;
+      overflow: hidden;
+      padding: 48px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Geometric shapes */
+    .geo-shape {
+      position: absolute;
+      pointer-events: none;
+    }
+    /* Rainbow arc left */
+    .geo-arc-left {
+      left: -80px; bottom: -40px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      border: 50px solid transparent;
+      border-top-color: var(--green);
+      border-right-color: var(--green-light);
+      opacity: 0.4;
+      transform: rotate(-30deg);
+    }
+    .geo-arc-left-2 {
+      left: -60px; bottom: -20px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      border: 40px solid transparent;
+      border-top-color: rgba(93,185,60,0.3);
+      border-right-color: rgba(163,224,130,0.2);
+      opacity: 0.6;
+      transform: rotate(-30deg);
+    }
+    /* Rectangles right */
+    .geo-rect-1 {
+      right: 60px; top: 30px;
+      width: 80px; height: 200px;
+      background: var(--green);
+      opacity: 0.15;
+      border-radius: 4px;
+    }
+    .geo-rect-2 {
+      right: 150px; top: 50px;
+      width: 60px; height: 150px;
+      background: var(--green-light);
+      opacity: 0.1;
+      border-radius: 4px;
+    }
+    .geo-rect-3 {
+      right: 220px; top: 20px;
+      width: 40px; height: 100px;
+      background: var(--green-dark);
+      opacity: 0.2;
+      border-radius: 4px;
+    }
+    /* Top right asterisk */
+    .geo-star {
+      top: 20px; right: 40px;
+      font-size: 3rem;
+      color: var(--green);
+      opacity: 0.3;
+      font-weight: 900;
+    }
+
+    .banner-card {
+      position: relative;
+      z-index: 2;
+      background: white;
+      border-radius: 8px;
+      padding: 48px 60px;
+      text-align: center;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .banner-card h2 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--black);
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .banner-card p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .banner-btn {
+      display: inline-block;
+      border: 2px solid var(--green);
+      color: var(--green-dark);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 11px 28px;
+      border-radius: 3px;
+      transition: background 0.2s, color 0.2s, transform 0.15s;
+    }
+    .banner-btn:hover { background: var(--green); color: white; transform: translateY(-1px); }
+    .banner-btn:active { transform: none; }
+    .banner-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+    /* ────────────────── MERCHANTS ────────────────── */
+    .merchants-section {
+      background: var(--white-smoke);
+      padding: 72px 36px;
+      border-bottom: 1px solid rgba(26,27,31,0.06);
+    }
+
+    .merchants-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green-dark);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .merchants-title {
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 900;
+      color: var(--black);
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.15;
+    }
+
+    .merchants-sub {
+      font-size: 15px;
+      color: #888;
+      text-align: center;
+      margin-bottom: 52px;
+      font-weight: 400;
+    }
+
+    .merchants-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .merchant-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: white;
+      border: 1px solid rgba(26,27,31,0.08);
+      border-radius: 12px;
+      padding: 32px 24px 24px;
+      text-decoration: none;
+      transition: border-color 0.2s ease,
+                  box-shadow 0.2s ease,
+                  transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .merchant-card:hover {
+      border-color: var(--green);
+      box-shadow: 0 8px 28px rgba(93,185,60,0.15), 0 2px 8px rgba(0,0,0,0.05);
+      transform: translateY(-5px);
+    }
+    .merchant-card:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+    }
+
+    .merchant-logo-wrap {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .merchant-logo {
+      max-height: 80px;
+      max-width: 100%;
+      width: auto;
+      object-fit: contain;
+      filter: grayscale(30%);
+      transition: filter 0.2s ease;
+    }
+    .merchant-card:hover .merchant-logo { filter: grayscale(0%); }
+
+    .merchant-divider {
+      width: 32px;
+      height: 2px;
+      background: var(--green);
+      border-radius: 1px;
+      opacity: 0.4;
+      transition: opacity 0.2s, width 0.2s;
+    }
+    .merchant-card:hover .merchant-divider { opacity: 1; width: 48px; }
+
+    .merchant-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--black);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .merchant-cta {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green-dark);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .merchant-card:hover .merchant-cta { opacity: 1; transform: translateY(0); }
+
+    /* ────────────────── VISIT ────────────────── */
+    .visit-section {
+      background: var(--white-smoke);
+      padding: 80px 36px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Botanical decoration */
+    .botanical {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.12;
+      font-size: 5rem;
+    }
+    .botanical-1 { top: 20px; right: 50%; color: var(--green); }
+    .botanical-2 { bottom: 20px; left: 20px; color: var(--amber); font-size: 3rem; }
+
+    .visit-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green-dark);
+      margin-bottom: 12px;
+    }
+    .visit-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      color: var(--black);
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .visit-text {
+      font-size: 15px;
+      color: #555;
+      line-height: 1.75;
+      margin-bottom: 28px;
+      max-width: 420px;
+    }
+    .visit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--black);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 13px 26px;
+      border-radius: 3px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .visit-btn:hover { background: var(--green); transform: translateY(-2px); }
+    .visit-btn:active { transform: none; }
+    .visit-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+    .visit-img-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    }
+    .visit-img-wrap img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+    }
+    /* Green accent corner */
+    .visit-img-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: -12px; right: -12px;
+      width: 80px; height: 80px;
+      background: var(--green);
+      border-radius: 8px;
+      z-index: -1;
+      opacity: 0.6;
+    }
+
+    /* ────────────────── ACTIVITIES ────────────────── */
+    .activities-section {
+      background: var(--black);
+      padding: 72px 36px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .activities-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .activities-title {
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 900;
+      color: white;
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.15;
+    }
+
+    .activities-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      margin-bottom: 52px;
+    }
+
+    .activities-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .activity-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 32px 24px 28px;
+      text-decoration: none;
+      transition: border-color 0.2s ease,
+                  background 0.2s ease,
+                  transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .activity-card:hover {
+      border-color: var(--green);
+      background: rgba(93,185,60,0.07);
+      transform: translateY(-5px);
+    }
+    .activity-card:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+    }
+
+    .activity-icon {
+      width: 52px;
+      height: 52px;
+      background: rgba(93,185,60,0.12);
+      border: 1px solid rgba(93,185,60,0.25);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .activity-card:hover .activity-icon {
+      background: rgba(93,185,60,0.22);
+      border-color: var(--green);
+    }
+
+    .activity-divider {
+      width: 32px;
+      height: 2px;
+      background: var(--green);
+      border-radius: 1px;
+      opacity: 0.3;
+      transition: opacity 0.2s, width 0.2s;
+    }
+    .activity-card:hover .activity-divider { opacity: 1; width: 48px; }
+
+    .activity-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: white;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .activity-desc {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      line-height: 1.65;
+      flex: 1;
+    }
+    .activity-card:hover .activity-desc { color: rgba(255,255,255,0.7); }
+
+    .activity-cta {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green-light);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      margin-top: 4px;
+    }
+    .activity-card:hover .activity-cta { opacity: 1; transform: translateY(0); }
+
+    /* ────────────────── INSTAGRAM / PHOTOS ────────────────── */
+    .insta-section {
+      background: var(--black);
+      padding: 60px 36px;
+      text-align: center;
+    }
+    .insta-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 6px;
+    }
+    .insta-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .insta-sub span { color: var(--green); font-weight: 700; }
+    .insta-grid {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .insta-grid::-webkit-scrollbar { display: none; }
+    .insta-thumb {
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .insta-thumb:hover { opacity: 0.8; transform: scale(0.97); }
+
+    /* ────────────────── INFO BAR ────────────────── */
+    .info-bar {
+      background: var(--white-smoke);
+      border-top: 1px solid rgba(26,27,31,0.08);
+      border-bottom: 1px solid rgba(26,27,31,0.08);
+      padding: 20px 36px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+    .info-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1.5px solid rgba(26,27,31,0.15);
+      border-radius: 100px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--black);
+      background: white;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .info-pill:hover { border-color: var(--green); background: #eef7ea; }
+    .info-pill svg { width: 14px; height: 14px; color: var(--green); flex-shrink: 0; }
+    .info-pill-arrow {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--green);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ────────────────── FOOTER ────────────────── */
+    footer {
+      background: var(--black);
+      padding: 20px 36px 16px;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--green-light); }
+    .footer-links a:focus-visible { outline: 2px solid var(--green); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 14px;
+    }
+    .footer-logo { height: 40px; filter: brightness(0) invert(1); opacity: 0.5; }
+    .footer-socials { display: flex; gap: 14px; }
+    .footer-social-icon {
+      width: 32px; height: 32px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      transition: border-color 0.2s, color 0.2s;
+      cursor: pointer;
+    }
+    .footer-social-icon:hover { border-color: var(--green); color: var(--green-light); }
+    .footer-copyright {
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      text-align: center;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════ NAV ══════════════════════ -->
+  <nav>
+    <div class="nav-left">
+      <a href="#bieres">Bières</a>
+      <a href="#brasserie">Notre Histoire</a>
+      <a href="#mission">Notre Mission</a>
+    </div>
+
+    <a href="#" style="display:flex; align-items:center; justify-content:center;">
+      <img src="./brand_assets/logo.png" alt="Bière de Montchat" class="nav-logo" />
+    </a>
+
+    <div class="nav-right">
+      <a href="#visiter">Où nous trouver</a>
+      <a href="#visiter">Nous Visiter</a>
+      <a href="mailto:contact@bieremontchat.fr">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════ HERO ══════════════════════ -->
+  <section class="hero" id="accueil">
+    <!-- Decorative asterisks -->
+    <div class="asterisk asterisk-2">✦</div>
+    <div class="asterisk asterisk-1">✦</div>
+    <div class="asterisk asterisk-3">+</div>
+    <div class="asterisk asterisk-4">✦</div>
+    <div class="dot-accent dot-1"></div>
+    <div class="dot-accent dot-2"></div>
+
+    <div class="hero-tag">Brasserie Artisanale · Lyon · Montchat</div>
+    <h1 class="hero-title">
+      Bière Brassée<br />
+      <em>Pour Le Plaisir</em>
+    </h1>
+  </section>
+
+  <!-- ══════════════════════ BEER SLIDER ══════════════════════ -->
+  <!-- Cards bleed edge-to-edge, marquee auto-scroll, pauses on hover -->
+  <div class="slider-wrap" id="bieres" aria-label="Nos bières">
+    <div class="slider-track">
+
+      <!-- ── Original set ── -->
+      <div class="beer-slide slide-blonde">
+        <img src="./biere/blonde.webp" alt="Blonde" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Blonde <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Lager Blonde</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-blanche">
+        <img src="./biere/blanche.webp" alt="Blanche" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Blanche <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Witbier</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-triplebock">
+        <img src="./biere/Triple Bock.webp" alt="Triple Bock" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Triple Bock <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Bock Forte</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-ambre">
+        <img src="./biere/ambrée.webp" alt="Ambrée" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Ambrée <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Vienna Lager</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-stout">
+        <img src="./brand_assets/montchat_header.jpeg" alt="Stout d'Hiver" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Stout d'Hiver <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Porter Robuste</div>
+        </div>
+      </div>
+
+      <div class="beer-slide slide-tacotaco">
+        <img src="./biere/Blondetacotaco.jpg" alt="Taco Taco" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Taco Taco <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Cerveza Mexicana</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-ddhipa">
+        <img src="./biere/DDH IPA.jpg" alt="DDH IPA" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">DDH IPA <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Double Dry Hopped</div>
+        </div>
+      </div>
+
+      <!-- ── Duplicate set for seamless loop (aria-hidden) ── -->
+      <div class="beer-slide slide-blonde" aria-hidden="true">
+        <img src="./biere/blonde.webp" alt="" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Blonde <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Lager Blonde</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-blanche" aria-hidden="true">
+        <img src="./biere/blanche.webp" alt="" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Blanche <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Witbier</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-triplebock" aria-hidden="true">
+        <img src="./biere/Triple Bock.webp" alt="" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Triple Bock <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Bock Forte</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-ambre" aria-hidden="true">
+        <img src="./biere/ambrée.webp" alt="" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Ambrée <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Vienna Lager</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-stout" aria-hidden="true">
+        <img src="./brand_assets/montchat_header.jpeg" alt="" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Stout d'Hiver <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Porter Robuste</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-tacotaco" aria-hidden="true">
+        <img src="./biere/Blondetacotaco.jpg" alt="" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">Taco Taco <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Cerveza Mexicana</div>
+        </div>
+      </div>
+      <div class="beer-slide slide-ddhipa" aria-hidden="true">
+        <img src="./biere/DDH IPA.jpg" alt="" />
+        <div class="beer-slide-overlay"></div>
+        <div class="slide-label-inner">
+          <div class="slide-name">DDH IPA <span class="slide-arrow">›</span></div>
+          <div class="slide-style">Double Dry Hopped</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SPLIT: EVENTS + BANNER ══════════════════════ -->
+  <div class="split-section" id="evenements">
+
+    <!-- ── Left 50%: Events calendar ── -->
+    <div class="split-left">
+      <section class="events-section" aria-label="Prochains événements">
+
+        <div class="events-header">
+          <h2 class="events-heading">
+            <span class="events-heading-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="color:white;">
+                <path d="M8 2a1 1 0 0 1 1 1v1h6V3a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1V3a1 1 0 0 1 1-1zm10 7H4v10h14V9z"/>
+              </svg>
+            </span>
+            Agenda Montchat
+          </h2>
+          <a href="#visiter" class="events-see-all">› Voir tout</a>
+        </div>
+
+        <div role="list">
+          <a href="#visiter" class="event-row" role="listitem">
+            <img src="./brand_assets/IMG_2543-copie-2-1-1024x683.jpg" alt="" class="event-img-preview" aria-hidden="true" />
+            <div class="event-date" aria-label="26 avril">
+              <span class="event-date-day">26</span>
+              <span class="event-date-month">AVR.</span>
+            </div>
+            <div class="event-content">
+              <div class="event-name">Soirée Dégustation Printemps</div>
+              <div class="event-venue">Brasserie de Montchat · Lyon</div>
+            </div>
+            <span class="event-cta" aria-hidden="true">› S'inscrire</span>
+          </a>
+
+          <a href="#visiter" class="event-row" role="listitem">
+            <img src="./brand_assets/IMG_2493-1024x683.jpeg" alt="" class="event-img-preview" aria-hidden="true" />
+            <div class="event-date" aria-label="3 mai">
+              <span class="event-date-day">03</span>
+              <span class="event-date-month">MAI</span>
+            </div>
+            <div class="event-content">
+              <div class="event-name">Brassage Participatif — Ouvert au public</div>
+              <div class="event-venue">Atelier de Brassage · Montchat</div>
+            </div>
+            <span class="event-cta" aria-hidden="true">› S'inscrire</span>
+          </a>
+
+          <a href="#visiter" class="event-row" role="listitem">
+            <img src="./brand_assets/IMG_2602-1024x683.jpeg" alt="" class="event-img-preview" aria-hidden="true" />
+            <div class="event-date" aria-label="10 mai">
+              <span class="event-date-day">10</span>
+              <span class="event-date-month">MAI</span>
+            </div>
+            <div class="event-content">
+              <div class="event-name">Vente Privée — Nouveaux Brassins</div>
+              <div class="event-venue">Brasserie de Montchat · Sur inscription</div>
+            </div>
+            <span class="event-cta" aria-hidden="true">› S'inscrire</span>
+          </a>
+
+          <a href="#visiter" class="event-row" role="listitem">
+            <img src="./brand_assets/Photo-de-nous-1024x768.jpg" alt="" class="event-img-preview" aria-hidden="true" />
+            <div class="event-date" aria-label="17 mai">
+              <span class="event-date-day">17</span>
+              <span class="event-date-month">MAI</span>
+            </div>
+            <div class="event-content">
+              <div class="event-name">Festival des Bières Artisanales de Lyon</div>
+              <div class="event-venue">Halle Tony Garnier · Lyon</div>
+            </div>
+            <span class="event-cta" aria-hidden="true">› S'inscrire</span>
+          </a>
+
+          <a href="#visiter" class="event-row" role="listitem">
+            <img src="./brand_assets/IMG_2628-1024x683.jpeg" alt="" class="event-img-preview" aria-hidden="true" />
+            <div class="event-date" aria-label="24 mai">
+              <span class="event-date-day">24</span>
+              <span class="event-date-month">MAI</span>
+            </div>
+            <div class="event-content">
+              <div class="event-name">Visite Guidée de la Brasserie</div>
+              <div class="event-venue">Brasserie de Montchat · Gratuit sur réservation</div>
+            </div>
+            <span class="event-cta" aria-hidden="true">› S'inscrire</span>
+          </a>
+
+          <a href="#visiter" class="event-row" role="listitem">
+            <img src="./brand_assets/monchat_brasserie.jpg" alt="" class="event-img-preview" aria-hidden="true" />
+            <div class="event-date" aria-label="7 juin">
+              <span class="event-date-day">07</span>
+              <span class="event-date-month">JUIN</span>
+            </div>
+            <div class="event-content">
+              <div class="event-name">Marché des Artisans &amp; Producteurs Locaux</div>
+              <div class="event-venue">Place du Quartier Montchat · Lyon</div>
+            </div>
+            <span class="event-cta" aria-hidden="true">› S'inscrire</span>
+          </a>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- ── Right 50%: 100% Artisanal banner ── -->
+    <div class="split-right" id="mission">
+      <section class="graphic-banner">
+        <div class="geo-shape geo-arc-left"></div>
+        <div class="geo-shape geo-arc-left-2"></div>
+        <div class="geo-shape geo-rect-1"></div>
+        <div class="geo-shape geo-rect-2"></div>
+        <div class="geo-shape geo-rect-3"></div>
+        <div class="asterisk geo-shape geo-star">✦</div>
+        <div class="banner-card">
+          <h2>100% Artisanal<br />&amp; Local !</h2>
+          <p>
+            Nous utilisons exclusivement du malt certifié local et biologique,
+            sélectionné auprès de producteurs engagés de la région.
+            Un brassage responsable, un goût authentique.
+          </p>
+          <a href="#visiter" class="banner-btn">En savoir plus sur notre approche</a>
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════ QUOTE ══════════════════════ -->
+  <section class="quote-section" id="brasserie">
+    <p class="quote-text">
+      La Bière de Montchat est intimement liée à
+      <span class="accent">l'histoire du quartier</span>.
+      Chaque jour, nous honorons cet héritage, nous utilisons
+      <span class="accent2">du malt local et biologique</span>,
+      et nous inspirons la passion pour la bière artisanale.
+    </p>
+  </section>
+
+  <!-- ══════════════════════ MERCHANTS ══════════════════════ -->
+  <section class="merchants-section">
+    <div class="merchants-eyebrow">Disponible chez nos partenaires</div>
+    <h2 class="merchants-title">Où trouver nos bières ?</h2>
+    <p class="merchants-sub">Retrouvez la Bière de Montchat chez des commerçants locaux engagés, proches de chez vous.</p>
+
+    <div class="merchants-grid">
+
+      <a href="https://www.apishortus.fr/" target="_blank" rel="noopener" class="merchant-card" aria-label="Apis Hortus">
+        <div class="merchant-logo-wrap">
+          <img src="./merchant/apishortus.png" alt="Apis Hortus" class="merchant-logo" />
+        </div>
+        <div class="merchant-divider"></div>
+        <div class="merchant-name">Apis Hortus</div>
+        <span class="merchant-cta">Visiter → </span>
+      </a>
+
+      <a href="https://www.viande-du-nutritionniste.com/" target="_blank" rel="noopener" class="merchant-card" aria-label="De Meuh en Mieux">
+        <div class="merchant-logo-wrap">
+          <img src="./merchant/Logo-De-meuh-en-mieux-1.jpg" alt="De Meuh en Mieux" class="merchant-logo" />
+        </div>
+        <div class="merchant-divider"></div>
+        <div class="merchant-name">De Meuh en Mieux</div>
+        <span class="merchant-cta">Visiter → </span>
+      </a>
+
+      <a href="https://www.lemarchelyonnais.fr/" target="_blank" rel="noopener" class="merchant-card" aria-label="Le Marché Lyonnais">
+        <div class="merchant-logo-wrap">
+          <img src="./merchant/logo-LML.png" alt="Le Marché Lyonnais" class="merchant-logo" />
+        </div>
+        <div class="merchant-divider"></div>
+        <div class="merchant-name">Le Marché Lyonnais</div>
+        <span class="merchant-cta">Visiter → </span>
+      </a>
+
+      <a href="https://www.marechal-fraicheur.fr/fr_FR/" target="_blank" rel="noopener" class="merchant-card" aria-label="Maréchal Fraîcheur">
+        <div class="merchant-logo-wrap">
+          <img src="./merchant/marechal-fraicheur.png" alt="Maréchal Fraîcheur" class="merchant-logo" />
+        </div>
+        <div class="merchant-divider"></div>
+        <div class="merchant-name">Maréchal Fraîcheur</div>
+        <span class="merchant-cta">Visiter → </span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════ VISIT ══════════════════════ -->
+  <section class="visit-section" id="visiter">
+    <div class="botanical botanical-1">🌿</div>
+    <div class="botanical botanical-2">🌾</div>
+
+    <div>
+      <div class="visit-label">Venir nous voir</div>
+      <h2 class="visit-title">Visitez notre<br />brasserie !</h2>
+      <p class="visit-text">
+        Notre brasserie et notre bar de dégustation sont installés au cœur
+        du quartier Montchat à Lyon. Un espace chaleureux où notre bière artisanale
+        coule en permanence, où de nouvelles recettes sont toujours en cours,
+        et où des visages souriants vous attendent pour vous accueillir.
+      </p>
+      <a href="mailto:contact@bieremontchat.fr" class="visit-btn">
+        Planifier une visite
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="visit-img-wrap">
+      <img src="./brand_assets/IMG_2543-copie-2-1-1024x683.jpg" alt="Bar de dégustation Montchat" />
+    </div>
+  </section>
+
+  <!-- ══════════════════════ ACTIVITIES ══════════════════════ -->
+  <section class="activities-section">
+    <div class="activities-eyebrow">Ce que nous proposons</div>
+    <h2 class="activities-title">Vivez l'expérience Montchat</h2>
+    <p class="activities-sub">Bien plus que de la bière — des moments à partager.</p>
+
+    <div class="activities-grid">
+
+      <!-- Visites & dégustations -->
+      <div class="activity-card">
+        <div class="activity-icon">🏭</div>
+        <div class="activity-divider"></div>
+        <div class="activity-name">Visites &amp; Dégustations</div>
+        <p class="activity-desc">
+          Christian vous accueille les derniers mercredis du mois — 4 mars, 20 mai, 8 juillet, 23 septembre —
+          de 18h30 à 20h30, pour découvrir la microbrasserie et le processus de fabrication de la bière.
+        </p>
+        <span class="activity-cta">S'inscrire →</span>
+      </div>
+
+      <!-- Atelier de brassage -->
+      <div class="activity-card">
+        <div class="activity-icon">🌾</div>
+        <div class="activity-divider"></div>
+        <div class="activity-name">Atelier de Brassage</div>
+        <p class="activity-desc">
+          Enfilez le tablier et brassez votre propre bière de A à Z. Maïs, houblon, levure :
+          vous repartez avec votre brassin et les secrets d'une recette artisanale réussie.
+        </p>
+        <span class="activity-cta">En savoir plus →</span>
+      </div>
+
+      <!-- Animation bièrologie -->
+      <div class="activity-card">
+        <div class="activity-icon">🍺</div>
+        <div class="activity-divider"></div>
+        <div class="activity-name">Animation Bièrologie</div>
+        <p class="activity-desc">
+          La bière rassemble une majorité de publics avec pour trait d'union, la convivialité.
+          Une animation ludique et accessible pour initier vos invités à l'art de la dégustation.
+        </p>
+        <span class="activity-cta">Nous contacter →</span>
+      </div>
+
+      <!-- Bière personnalisée -->
+      <div class="activity-card">
+        <div class="activity-icon">🎁</div>
+        <div class="activity-divider"></div>
+        <div class="activity-name">Votre Bière Personnalisée</div>
+        <p class="activity-desc">
+          Pour célébrer un événement d'entreprise ou offrir un cadeau unique, le brasseur conçoit
+          des bières sur mesure — recette, étiquette et format adaptés à votre occasion.
+        </p>
+        <span class="activity-cta">Demander un devis →</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════ INSTA / PHOTOS ══════════════════════ -->
+  <section class="insta-section">
+    <h2 class="insta-title">Suivez-nous sur Instagram</h2>
+    <div class="insta-sub">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      <span>@bieremontchat</span> · Retrouvez-nous et partagez vos moments
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </div>
+    <div class="insta-grid">
+      <img src="./brand_assets/IMG_2543-copie-2-1-1024x683.jpg" alt="" class="insta-thumb" />
+      <img src="./brand_assets/IMG_2602-1024x683.jpeg" alt="" class="insta-thumb" />
+      <img src="./brand_assets/Photo-de-nous-1024x768.jpg" alt="" class="insta-thumb" />
+      <img src="./brand_assets/IMG_2493-1024x683.jpeg" alt="" class="insta-thumb" />
+      <img src="./brand_assets/monchat_brasserie.jpg" alt="" class="insta-thumb" />
+      <img src="./brand_assets/IMG_2623-1024x683.jpeg" alt="" class="insta-thumb" />
+      <img src="./brand_assets/IMG_2628-1024x683.jpeg" alt="" class="insta-thumb" />
+    </div>
+  </section>
+
+  <!-- ══════════════════════ INFO BAR ══════════════════════ -->
+  <div class="info-bar">
+    <div class="info-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Ven. 17h–20h · Sam. 10h–13h
+      <span class="info-pill-arrow">›</span>
+    </div>
+    <div class="info-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Quartier Montchat · Lyon
+      <span class="info-pill-arrow">›</span>
+    </div>
+    <div class="info-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.07L6.6 1a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.65a16 16 0 0 0 5.44 5.44l1.71-1.71a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 14.9z"/></svg>
+      contact@bieremontchat.fr
+      <span class="info-pill-arrow">›</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ FOOTER ══════════════════════ -->
+  <footer>
+    <div class="footer-links">
+      <a href="#bieres">Nos Bières</a>
+      <a href="#brasserie">À propos</a>
+      <a href="#mission">Notre Mission</a>
+      <a href="#visiter">Newsletters</a>
+    </div>
+
+    <div class="footer-bottom">
+      <img src="./brand_assets/logo.png" alt="Bière de Montchat" class="footer-logo" />
+      <div class="footer-socials">
+        <div class="footer-social-icon" aria-label="Instagram">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        </div>
+        <div class="footer-social-icon" aria-label="Facebook">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-copyright">
+      Copyright © 2024 Bière de Montchat · Tous droits réservés · Site artisanal, comme nos bières
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const wrap  = document.querySelector('.slider-wrap');
+      const track = document.querySelector('.slider-track');
+
+      // ── State ──────────────────────────────────────────────
+      let pos       = 0;          // current scroll position (px)
+      const SPEED   = 0.55;       // px per rAF frame (~33px/s at 60fps)
+      let autoRun   = true;       // auto-scroll active?
+      let isDragging= false;
+      let dragStartX= 0;
+      let dragStartPos = 0;
+      let velocity  = 0;          // momentum on release
+      let lastDragX = 0;
+      let lastDragT = 0;
+
+      // Half-width = one full set of cards (for seamless wrap)
+      function halfWidth() { return track.scrollWidth / 2; }
+
+      // Keep pos within [0, halfWidth)
+      function wrap_(p) {
+        const h = halfWidth();
+        if (h <= 0) return p;
+        return ((p % h) + h) % h;
+      }
+
+      // ── Render loop ────────────────────────────────────────
+      function tick() {
+        if (!isDragging && autoRun) {
+          pos = wrap_(pos + SPEED);
+        }
+        track.style.transform = `translateX(${-pos}px)`;
+        requestAnimationFrame(tick);
+      }
+
+      // Reduce motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        autoRun = false;
+      }
+
+      requestAnimationFrame(tick);
+
+      // ── Hover: pause auto-scroll ───────────────────────────
+      wrap.addEventListener('mouseenter', () => { autoRun = false; });
+      wrap.addEventListener('mouseleave', () => {
+        if (!isDragging) autoRun = true;
+      });
+
+      // ── Drag: click + hold and move left/right ─────────────
+      track.addEventListener('mousedown', e => {
+        isDragging   = true;
+        dragStartX   = e.clientX;
+        dragStartPos = pos;
+        lastDragX    = e.clientX;
+        lastDragT    = performance.now();
+        velocity     = 0;
+        track.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const now = performance.now();
+        const dt  = now - lastDragT || 1;
+        velocity  = (lastDragX - e.clientX) / dt;   // px/ms
+        lastDragX = e.clientX;
+        lastDragT = now;
+
+        const dx = dragStartX - e.clientX;
+        pos = wrap_(dragStartPos + dx);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        track.classList.remove('dragging');
+        // Apply momentum: convert px/ms → target offset, then resume auto-scroll
+        pos = wrap_(pos + velocity * 120);
+        // Resume auto-scroll after a short momentum coast
+        setTimeout(() => { autoRun = true; }, 600);
+      });
+
+      // Touch support
+      track.addEventListener('touchstart', e => {
+        dragStartX   = e.touches[0].clientX;
+        dragStartPos = pos;
+        lastDragX    = dragStartX;
+        lastDragT    = performance.now();
+        velocity     = 0;
+        isDragging   = true;
+        autoRun      = false;
+      }, { passive: true });
+
+      document.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        const now = performance.now();
+        const dt  = now - lastDragT || 1;
+        velocity  = (lastDragX - e.touches[0].clientX) / dt;
+        lastDragX = e.touches[0].clientX;
+        lastDragT = now;
+        pos = wrap_(dragStartPos + (dragStartX - e.touches[0].clientX));
+      }, { passive: true });
+
+      document.addEventListener('touchend', () => {
+        isDragging = false;
+        pos = wrap_(pos + velocity * 120);
+        setTimeout(() => { autoRun = true; }, 600);
+      });
+    })();
+  </script>
+</body>
+</html>
